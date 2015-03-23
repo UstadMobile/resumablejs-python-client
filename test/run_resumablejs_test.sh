@@ -8,7 +8,7 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
-if [ $# -ne 3 ]; then
+if [ $# -lt 3 ] && [ $# -gt 4 ]; then
     echo "You need to give at least 3 arguments"
     echo "Usage: .sh <serverfile> <port> <test file path> <Optional: file to test>"
     echo "Ex:    .sh node-qunit-server-2.js 1234 /home/varuna/UstadMobile/resumablejs-python-client/testresumable.py chrome.deb"    
