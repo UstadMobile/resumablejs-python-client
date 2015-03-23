@@ -9,36 +9,12 @@ from io import BytesIO
 import hashlib
 import time
 
-"""
-try:
-    fileToUpload = sys.argv[1:][0]
-    filepath = sys.argv[1:][0]
-    controlUrl = sys.argv[1:][1]
-    chunkSize = sys.argv[1:][2]
-    chunkRetries = sys.argv[1:][3]
-    resumableUrl = sys.argv[1:][4]
-
-    try:
-        file_in = open(sys.argv[1:][0], "rb")
-        file_in.close()
-    
-    except:
-        print("!ERROR in file given!")
-        print("Unable to open file. Does the file exist?")
-except:
-    print("!ERROR in usage!")
-    print("Run as: <script> <File (whole path)> <control server url> <chunk size> <chunk retries number> <resumable control server url>")
-    77
-    sys.exit(1)
-
-#urllib2.urlopen("http://example.com/foo/bar").read()	
-"""
 
 serverport=os.environ['RESUMABLEJSSERVERPORT']
 clientport = int(serverport) + 1
 #filepath = "file.txt"
 currentdir = os.path.dirname(os.path.abspath(__file__))
-filepath = os.getenv('RESUMABLEJSFILEPATH', currentdir + "/chrome.deb")
+filepath = os.getenv('RESUMABLEJSFILEPATH', currentdir + "../chrome.deb")
 controlUrl = "http://127.0.0.1:"+serverport
 chunkSize = 1048576 #1MB
 chunkRetries = 10
@@ -63,17 +39,6 @@ class TestResumableClient(unittest.TestCase):
         two=2
         opo=1+1
         self.assertEqual(two, opo, "Success!")
-
-    """
-    def testResumableClient(self):
-    	resumable = ResumableClient(filepath, resumableUrl, chunkSize, chunkRetries)
-    	#resumable = ResumableClient("file.txt", "http://127.0.0.1.1235/upload", 10020, 10)
-    	status_code = resumable.startUpload();
-    	print(status_code)
-    	self.assertEqual(status_code, 200, "Normal success")
-    	retry = resumable.retry
-    	self.assertEqual(retry, 0, "Success witout any retries")
-    """
     
     
     def testResumableClientStart(self):
@@ -82,15 +47,11 @@ class TestResumableClient(unittest.TestCase):
         urllib2.urlopen(controlUrl + "/resumable/slowdownoff").read()
     	response = resumable.startUpload()
         status_code = response.status_code
-    	print(status_code)
     	self.assertEqual(status_code, 200, "Normal Start success")
     	retry = resumable.retry
         serverfilepath = response.headers['serverfilepath']
-        print("serverfilepath: " + serverfilepath)
         time.sleep(5)
         servermd5 = hashlib.md5(open(serverfilepath).read()).hexdigest()
-        print(clientmd5)
-        print(servermd5)
     	self.assertEqual(retry, 0, "Success witout any retries")
         self.assertEqual(clientmd5, servermd5, "Client and Server md5 matches!")
 
@@ -105,7 +66,6 @@ class TestResumableClient(unittest.TestCase):
             status_code = response.status_code
         except:
             status_code = response
-    	print(status_code)
     	self.assertEqual(status_code, 1, "Normal Stop Fail test Success: " + str(status_code))
 
     def testResumableClientSlowDownOn(self):
@@ -114,14 +74,10 @@ class TestResumableClient(unittest.TestCase):
     	urllib2.urlopen(controlUrl + "/resumable/slowdownon").read()
     	response = resumable.startUpload();
         status_code = response.status_code
-    	print(status_code)
     	retry = resumable.retry
         serverfilepath = response.headers['serverfilepath']
-        print("serverfilepath: " + serverfilepath)
         time.sleep(5)
         servermd5 = hashlib.md5(open(serverfilepath).read()).hexdigest()
-        print(clientmd5)
-        print(servermd5)
     	self.assertEqual(status_code, 200, "Normal Slow Down On test Success: " + str(status_code))
         self.assertEqual(clientmd5, servermd5, "Client and Server md5 matches!")
 
@@ -133,7 +89,6 @@ class TestResumableClient(unittest.TestCase):
     	urllib2.urlopen(controlUrl + "/resumable/slowdownon").read()
     	response = resumable.startUpload();
         status_code = response.status_code
-    	print(status_code)
     	retry = resumable.retry
     	self.assertEqual(status_code, 200, "Normal Slow Down On test Success: " + str(status_code))
     	self.assertEqual(retry, 0, "Success with slow down success without any retries (supposed to fail")
@@ -145,14 +100,10 @@ class TestResumableClient(unittest.TestCase):
     	urllib2.urlopen(controlUrl + "/resumable/slowdownoff").read()
     	response = resumable.startUpload();
         status_code = response.status_code
-    	print(status_code)
     	retry = resumable.retry
         serverfilepath = response.headers['serverfilepath']
-        print("serverfilepath: " + serverfilepath)
         time.sleep(5)
         servermd5 = hashlib.md5(open(serverfilepath).read()).hexdigest()
-        print(clientmd5)
-        print(servermd5)
     	self.assertEqual(status_code, 200, "Normal Slow Down Off test Success: " + str(status_code))
     	self.assertEqual(retry, 0, "Success witout any retries")
         self.assertEqual(clientmd5, servermd5, "Client and Server md5 matches!")

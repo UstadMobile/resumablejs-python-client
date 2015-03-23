@@ -8,30 +8,10 @@ from mimetypes import MimeTypes
 import urllib
 import os
 import time
-#import MultipartPostHandler
-
-"""
-try:
-    fileToUpload = sys.argv[1:][0]
-    filepath = sys.argv[1:][0]
-    url = sys.argv[1:][1]
-    chunkSize = sys.argv[1:][2]
-    chunkRetries = sys.argv[1:][3]
-    
-    try:
-        file_in = open(sys.argv[1:][0], "rb")
-	
-    except:
-	print("!ERROR in file given!")
-	print("Unable to open file. Does the file exist?")
-except:
-    print("!ERROR in usage!")
-    print("Run as: <script> <File (whole path)> <upload url> <chunk size> <chunk retries number>")
-    sys.exit(1)
-"""
-
 
 class ResumableClient(object):
+
+    #TODO: Move init up; all thesae need to be in init
     chunkNumber = 0
     filePath = ""
     url = ""
@@ -42,6 +22,7 @@ class ResumableClient(object):
     totalChunks = 0
     totalSize = 0
     identifier = ""
+    #TODO: fix spelling
     realtivePath= ""
     retry=0
 
@@ -69,6 +50,7 @@ class ResumableClient(object):
         return mime_type
     
     def get_total_size(self, filepath):
+        #TODO: Use os.path.getsize
         try:
             print("Opening file: " + str(filepath))
             file_in = open(filepath, "rb")
@@ -85,14 +67,8 @@ class ResumableClient(object):
                 print("Unable to close file.");
 
     def __init__(self, filepath, url, chunksize, maxretries):
-        try:
-            file_in = open(filepath, "rb")
+        file_in = open(filepath, "rb")
         
-        except:
-            print("!ERROR in file given!")
-            print("Unable to open file. Does the file exist?")
-            sys.exit(1)
-
         self.filePath = filepath
         self.url = url
         self.chunkSize = int(chunksize)
@@ -255,9 +231,4 @@ class ResumableClient(object):
         else:
             return 1
 
-"""
-resumable = ResumableClient(filepath, url, chunkSize, chunkRetries)
-print("hows it going?")
-resumable.startUpload();
-print("Whats up?")
-"""
+
