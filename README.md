@@ -1,38 +1,39 @@
 Welcome to resumablejs python client implementation.
 
-This project consists of two python files:
+resumablejsclient.py
 
+This is a generic Library that contains the basic logic and implementation for Resumablejs client.
+You should have a resumablejs server up and running and its end point set up. This server can be a django python web application, nodejs or anything else as per resumable.js 
 
-1. resumablejs-client.py
+The library is at src/resumablejsclient.py 
+Include that library in your python application / file and import ResumableClient.
+from resumablejsclient import ResumableClient
 
-This is a generic tester that contains the basic logic and implementation for Resumablejs client.
+Then in your code, initialise the library as: 
 
-You should have a resumablejs server up and running and its end point set up. This server can be a django python web application or anything else as per resumable.js 
+resumable = ResumableClient('/file/to/upload.zip', 'http://server/upload/location') 
 
-This file is the Client. We could not find any python based implementation so we created one. 
-If you want to see how we did it, this is the file you need to be looking and testing. 
+The usage is:
 
-To run and test this, simply run the python script at:
+	    file_path: Path to local file to upload
+            chunk_size: Chunk size to use with http upload (default 1MB)
+            max_retries: Maximum number of retries (default: 20 times , over a second interval)
+            request_extra_params: Dictionary of HTTP paramaters to add to each request (default: empty dictionary)
+            http_auth: HTTP Basic auth parameters as a tuple of (username, password) (default: None)
 
-resumablejs-client.py "your file path" "your resumablejs server upload endpoint"  Each chunk size (in bytes)   max number of retries (times seconds) 
+The request_extra_params can be anything else that your resumablejs server wants, the http_auth will take in a tuple to do BASIC Authentication credentials. 
+This means the file will be uploaded to an already set up resumbalejs server's endpoint with chunks of 1 MB (1048576 bytes) and it will retry 20 times (with a delay of 1 second every retry)
+you can change the chunk size and max number of retries by initialising as:
 
-eg:
-resumablejs-client.py /my/awesome/file/to/upload.txt http://www.resumableserver.com/upload/ 1048576 10
+resumable = ResumableClient('/file/to/upload.zip', 'http://server/upload/location', 524288, 10) 
+Thats 500 KB chunks of 10 max retries.
 
-This means the file upload.txt will be uploaded to an already set up resumbalejs server's endpoint with chunks of 1 MB (1048576 bytes) and it will retry 10 times (with a delay of 1 second every retry)
+To actually start the upload, just call:
 
+resumable.start_upload();
 
-2. resumablejs-client-umcloud.py 
-
-This is for UMCLoud (Ustad Mobile Cloud Portal) implementation and testing purposes.
-To test this against UMCloud run this as:
-
-Currently we are using this to test eXe's block uploads (With the right endpoint, we have added username, password checks, checks to see if the epub/elp is valid, force New parameter and not Assign parameter as per eXe's milestones and features. This is probably not something applicable if you are just looking at knowing how the logic works. For that look at point 1. which is a generic resumablejs python client.
-
-resumablejs-client-umcloud.py "file path" "resumablejs server endpoint"  chunk size in bytes    max number of retries per chunk  "username of umcloud" "password of umcloud" "forceNew" "noAutoassign"
+This returns the response of the whole process or 1 for failure. 
 
 ToDo:
-1. Set this up with unit testing.
-2. Use UploadJob class for every uploads.
 3. Use variable chunk size based on network speed. 
 
